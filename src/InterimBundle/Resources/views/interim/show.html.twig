@@ -1,0 +1,42 @@
+{% extends "@Interim/Default/layout.html.twig" %}
+
+{% block content %}
+    <h1>Interim</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ interim.id }}</td>
+            </tr>
+            <tr>
+                <th>Lastname</th>
+                <td>{{ interim.lastName }}</td>
+            </tr>
+            <tr>
+                <th>Firstname</th>
+                <td>{{ interim.firstName }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ interim.email }}</td>
+            </tr>
+            <tr>
+                <th>City</th>
+                <td>{{ interim.city }}</td>
+            </tr>
+            <tr>
+                <th>Postal</th>
+                <td>{{ interim.postal }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <a href="{{ path('interim_edit', { 'id': interim.id }) }}" class="btn btn-warning">Edit</a>
+    <br/><br/>
+    {{ form_start(delete_form) }}
+        <input type="submit" value="Delete" class="btn btn-danger">
+    {{ form_end(delete_form) }}
+
+{% endblock %}

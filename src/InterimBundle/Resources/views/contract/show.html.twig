@@ -1,0 +1,34 @@
+{% extends "@Interim/Default/layout.html.twig" %}
+
+{% block content %}
+    <h1>Contract</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ contract.id }}</td>
+            </tr>
+            <tr>
+                <th>Startdate</th>
+                <td>{% if contract.startDate %}{{ contract.startDate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Enddate</th>
+                <td>{% if contract.endDate %}{{ contract.endDate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ contract.status }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <a href="{{ path('contract_edit', { 'id': contract.id }) }}" class="btn btn-warning">Edit</a>
+    <br/><br/>
+    {{ form_start(delete_form) }}
+        <input type="submit" value="Delete" class="btn btn-danger">
+    {{ form_end(delete_form) }}
+
+{% endblock %}

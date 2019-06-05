@@ -1,0 +1,37 @@
+{% extends "@Interim/Default/layout.html.twig" %}
+
+{% block content %}
+    <h1>Liste des Interimaires</h1>
+
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Ville</th>
+                <th>Code postal</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for interim in interims %}
+            <tr>
+                <td scope="col"><a href="{{ path('interim_show', { 'id': interim.id }) }}">{{ interim.id }}</a></td>
+                <td scope="col">{{ interim.lastName }}</td>
+                <td scope="col">{{ interim.firstName }}</td>
+                <td scope="col">{{ interim.email }}</td>
+                <td scope="col">{{ interim.city }}</td>
+                <td scope="col">{{ interim.postal }}</td>
+                <td scope="col">
+                    <a href="{{ path('interim_show', { 'id': interim.id }) }}" class="btn btn-warning">Voir</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('interim_new') }}" class="btn btn-primary">Créer un nouvel interim</a>
+
+{% endblock %}
