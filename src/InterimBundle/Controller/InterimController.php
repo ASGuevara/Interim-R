@@ -66,10 +66,12 @@ class InterimController extends Controller
     public function showAction(Interim $interim)
     {
         $deleteForm = $this->createDeleteForm($interim);
+        $note = $this->get('interimManager')->getNoteByInterim($interim);
 
         return $this->render('@Interim/interim/show.html.twig', array(
             'interim' => $interim,
             'delete_form' => $deleteForm->createView(),
+            'note'  => $note
         ));
     }
 

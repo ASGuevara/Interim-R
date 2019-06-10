@@ -3,9 +3,11 @@
 namespace InterimBundle\Controller;
 
 use InterimBundle\Entity\Contract;
+use InterimBundle\Entity\MissionMonitor;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Contract controller.
@@ -47,6 +49,12 @@ class ContractController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($contract);
             $em->flush();
+            // we create a new mission monitor to note the interim
+            $mission = new MissionMonitor();
+            $mission->setContract($contract);
+            $mission->setInterim($contract->getInterim());
+            $em->persist($mission);
+            $em->flush();
 
             return $this->redirectToRoute('contract_show', array('id' => $contract->getId()));
         }
@@ -67,9 +75,12 @@ class ContractController extends Controller
     {
         $deleteForm = $this->createDeleteForm($contract);
 
+        $mission = $this->get('missionManager')->getMissionByContract($contract);
+
         return $this->render('@Interim/contract/show.html.twig', array(
             'contract' => $contract,
             'delete_form' => $deleteForm->createView(),
+            'mission'   => $mission
         ));
     }
 
@@ -132,5 +143,29 @@ class ContractController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+
+    /**
+     *
+     * @Route("/changeMission/{idmission}/{name}/{value}", name="change_attr_mission")
+     *
+     */
+    private function changeAttrMissionAction(Contract $contract)
+    {
+
+        if ($request->isXmlHttpRequest()) {
+            $mission = $em->getRepository('InterimBundle:MissionMonitor')->findOneById($request->request->get('idmission'));
+            if($request->request->get('name') == "note") {
+                $mission->setNote($request->request->get('value'));
+            } else if ($request->request->get('name') == "status") {
+                $mission->setStatus($request->request->get('value'));
+            }
+            return new JsonResponse( array('status'  => 'Success' ));
+        }
+        else {
+            return new JsonResponse( array('status'  => 'Failure' ));
+        }
+
     }
 }

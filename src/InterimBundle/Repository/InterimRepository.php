@@ -2,6 +2,11 @@
 
 namespace InterimBundle\Repository;
 
+use Doctrine\ORM\Query\Expr\Join;
+use InterimBundle\Entity\Interim;
+use InterimBundle\InterimBundle;
+
+
 /**
  * InterimRepository
  *
@@ -10,4 +15,38 @@ namespace InterimBundle\Repository;
  */
 class InterimRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * Return the Interim list sort by their notes
+     * @return Interim[]
+     */
+    public function findListSortedByNotes()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('i')
+            ->from('InterimBundle:Interim','i')
+            ->leftjoin('InterimBundle:MissionMonitor', 'mm', Join::WITH, 'i.id = mm.interim');
+        $qb->orderBy('SUM(mm.note)/COUNT(mm.note)','DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Return the global note of an interim
+     * @param Interim $interim
+     * @return int | null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findGlobalNoteByInterim($interim)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->select('SUM(mm.note)/COUNT(mm.note) as gobalNote')
+            ->from('InterimBundle:Interim', 'i')
+            ->leftjoin('InterimBundle:MissionMonitor', 'mm', Join::WITH, 'i.id = mm.interim')
+            ->where('i.id = '.(int)$interim->getId());
+        $note = $qb->getQuery()->getOneOrNullResult();
+
+        return $note['gobalNote'];
+    }
 }

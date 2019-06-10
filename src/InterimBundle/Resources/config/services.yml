@@ -1,4 +1,8 @@
 services:
-#    interim.example:
-#        class: InterimBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+  interimManager:
+    class: InterimBundle\Services\Manager\interimManager
+    arguments: ['@doctrine.orm.entity_manager']
+
+  missionManager:
+    class: InterimBundle\Services\Manager\missionManager
+    arguments: ['@doctrine.orm.entity_manager']

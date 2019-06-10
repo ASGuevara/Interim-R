@@ -3,32 +3,71 @@
 {% block content %}
     <h1>Contract</h1>
 
-    <table>
+    <table  class="table">
         <tbody>
             <tr>
                 <th>Id</th>
                 <td>{{ contract.id }}</td>
             </tr>
             <tr>
-                <th>Startdate</th>
+                <th>Date de début</th>
                 <td>{% if contract.startDate %}{{ contract.startDate|date('Y-m-d') }}{% endif %}</td>
             </tr>
             <tr>
-                <th>Enddate</th>
+                <th>Date de fin</th>
                 <td>{% if contract.endDate %}{{ contract.endDate|date('Y-m-d') }}{% endif %}</td>
             </tr>
             <tr>
                 <th>Status</th>
                 <td>{{ contract.status }}</td>
             </tr>
+            <tr>
+                <th>Intérim</th>
+                <td>
+                    <a href="{{ path('interim_show', { 'id': contract.interim.id }) }}">
+                        {{ contract.interim.firstName }} {{ contract.interim.LastName }}
+                    </a>
+                </td>
+            </tr>
         </tbody>
     </table>
 
 
-    <a href="{{ path('contract_edit', { 'id': contract.id }) }}" class="btn btn-warning">Edit</a>
-    <br/><br/>
     {{ form_start(delete_form) }}
+        <a href="{{ path('contract_edit', { 'id': contract.id }) }}" class="btn btn-warning">Edit</a>
+        &nbsp;&nbsp;
         <input type="submit" value="Delete" class="btn btn-danger">
     {{ form_end(delete_form) }}
+    <br><br>
+    <h1>Suivi de mission</h1>
+    {% if mission is defined and mission is not null %}
+        <input type="hidden" value="{{ mission.id }}">
+        Status :  <select class="form-control" onchange="onChange(this)" name="status">
+                    <option value="active" {% if mission.status == "active" %} selected {% endif %}>Actif</option>
+                    <option value="deleted"  {% if mission.status == "deleted" %} selected {% endif %}>Supprimé</option>
+                  </select> <br/>
+        Note : <input type="text" name="note" value="{{ mission.note }}" class="form-control" onchange="onChange(this)">
+    {% endif %}
 
+
+    <script>
+        function onChange(object) {
+            var idmission = $('#idMission').attr('value');
+            var name = object.name;
+            var value = object.value;
+            var url = "/changeMission/"+idmission+'/'+name+'/'+value;
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function(json) {
+                    console.log(json);
+                },
+                error: function() {
+                    console.log(json);
+                }
+            });
+
+        }
+
+    </script>
 {% endblock %}
